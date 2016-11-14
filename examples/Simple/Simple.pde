@@ -21,7 +21,7 @@ void setup(void)
 {
   // start serial port
   Serial.begin(9600);
-  Serial.println("Dallas Temperature IC Control Library Demo");
+  Serial.println("Fan Controller Library Demo");
 
   // Start up the library
   fan.begin();
