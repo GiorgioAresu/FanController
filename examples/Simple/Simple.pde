@@ -1,4 +1,4 @@
-// Include the libraries we need
+// Include the library
 #include <FanController.h>
 
 // Sensor wire is plugged into port 2 on the Arduino.
@@ -33,9 +33,10 @@ void setup(void)
 void loop(void)
 { 
   // call fan.getSpeed() to get fan RPM.
-  Serial.print("Reading current speed...");
+  Serial.print("Current speed: ");
   unsigned int rpms = fan.getSpeed(); // Send the command to get RPM
-  Serial.println(rpms);
+  Serial.print(rpms);
+  Serial.println("RPM");
 
   // Not really needed, just avoiding spamming the monitor,
   // readings will be performed no faster than once every THRESHOLD ms anyway
