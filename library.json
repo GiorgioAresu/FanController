@@ -1,0 +1,21 @@
+{
+  "name": "FanController",
+  "keywords": "fan, pwm, temperature",
+  "description": "Arduino Library for controlling 3 pins and 4 pins (PWM) PC fans",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/GiorgioAresu/FanController.git"
+  },
+  "authors": 
+  [
+    {
+      "name": "Giorgio Aresu",
+      "email": "giorgioaresu@gmail.com",
+      "maintainer": true
+    }
+  ],
+  "version": "0.1.0",
+  "frameworks": "arduino",
+  "platforms": "*"
+}
