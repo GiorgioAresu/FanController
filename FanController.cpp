@@ -1,14 +1,14 @@
 #include "Arduino.h"
-#include "FanReader.h"
+#include "FanController.h"
 
-FanReader::FanReader(byte pin, unsigned int threshold)
+FanController::FanController(byte pin, unsigned int threshold)
 {
 	_pin = pin;
 	_interruptPin = digitalPinToInterrupt(pin);
 	_threshold = threshold;
 }
 
-void FanReader::begin()
+void FanController::begin()
 {
 	static byte instance;
 	_instance = instance;
@@ -18,7 +18,7 @@ void FanReader::begin()
 	instance++;
 }
 
-unsigned int FanReader::getSpeed() {
+unsigned int FanController::getSpeed() {
 	unsigned int elapsed = millis() - _lastMillis;
 	if (elapsed > _threshold)
 	{
@@ -32,7 +32,7 @@ unsigned int FanReader::getSpeed() {
 	}
 }
 
-void FanReader::_attachInterrupt()
+void FanController::_attachInterrupt()
 {
 	switch (_instance)
 	{
@@ -57,24 +57,24 @@ void FanReader::_attachInterrupt()
 	}
 }
 
-FanReader * FanReader::_instances[6];
+FanController * FanController::_instances[6];
 
-void FanReader::_trigger()
+void FanController::_trigger()
 {
 	_halfRevs++;
 }
 
-void FanReader::_triggerCaller(byte instance)
+void FanController::_triggerCaller(byte instance)
 {
-	if (FanReader::_instances[instance] != nullptr)
+	if (FanController::_instances[instance] != nullptr)
 	{
-		FanReader::_instances[instance]->_trigger();
+		FanController::_instances[instance]->_trigger();
 	}
 }
 
-void FanReader::_triggerExt0() { FanReader::_triggerCaller(0); }
-void FanReader::_triggerExt1() { FanReader::_triggerCaller(1); }
-void FanReader::_triggerExt2() { FanReader::_triggerCaller(2); }
-void FanReader::_triggerExt3() { FanReader::_triggerCaller(3); }
-void FanReader::_triggerExt4() { FanReader::_triggerCaller(4); }
-void FanReader::_triggerExt5() { FanReader::_triggerCaller(5); }
+void FanController::_triggerExt0() { FanController::_triggerCaller(0); }
+void FanController::_triggerExt1() { FanController::_triggerCaller(1); }
+void FanController::_triggerExt2() { FanController::_triggerCaller(2); }
+void FanController::_triggerExt3() { FanController::_triggerCaller(3); }
+void FanController::_triggerExt4() { FanController::_triggerCaller(4); }
+void FanController::_triggerExt5() { FanController::_triggerCaller(5); }
