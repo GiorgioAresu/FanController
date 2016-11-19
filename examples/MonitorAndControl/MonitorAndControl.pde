@@ -1,5 +1,5 @@
 // Include the library
-#include "FanController.h"
+#include <FanController.h>
 
 // Sensor wire is plugged into port 2 on the Arduino.
 // For a list of available pins on your board,
