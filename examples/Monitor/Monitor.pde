@@ -1,5 +1,5 @@
 // Include the library
-#include <FanController.h>
+#include "FanController.h"
 
 // Sensor wire is plugged into port 2 on the Arduino.
 // For a list of available pins on your board,
@@ -9,10 +9,10 @@
 // Choose a threshold in milliseconds between readings.
 // A smaller value will give more updated results,
 // while a higher value will give more accurate and smooth readings
-#define THRESHOLD 1000
+#define SENSOR_THRESHOLD 1000
 
-// Pass our oneWire reference to Dallas Temperature. 
-FanController fan(SENSOR_PIN, THRESHOLD);
+// Initialize library
+FanController fan(SENSOR_PIN, SENSOR_THRESHOLD);
 
 /*
  * The setup function. We only start the library here
