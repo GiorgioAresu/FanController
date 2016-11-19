@@ -1,11 +1,14 @@
 #include "Arduino.h"
 #include "FanController.h"
 
-FanController::FanController(byte sensorPin, unsigned int sensorThreshold)
+FanController::FanController(byte sensorPin, unsigned int sensorThreshold, byte pwmPin)
 {
 	_sensorPin = sensorPin;
 	_sensorInterruptPin = digitalPinToInterrupt(sensorPin);
 	_sensorThreshold = sensorThreshold;
+	_pwmPin = pwmPin;
+	pinMode(pwmPin, OUTPUT);
+	_pwmDutyCycle = 100;
 }
 
 void FanController::begin()
@@ -14,6 +17,7 @@ void FanController::begin()
 	_instance = instance;
 	_instances[instance] = this;
 	digitalWrite(_sensorPin, HIGH);
+	setDutyCycle(_pwmDutyCycle);
 	_attachInterrupt();
 	instance++;
 }
@@ -30,6 +34,15 @@ unsigned int FanController::getSpeed() {
 		_attachInterrupt();
 		return _lastReading;
 	}
+}
+
+void FanController::setDutyCycle(byte dutyCycle) {
+	_pwmDutyCycle = min(dutyCycle, 100);
+	analogWrite(_pwmPin, 2.55 * _pwmDutyCycle);
+}
+
+byte FanController::getDutyCycle() {
+	return _pwmDutyCycle;
 }
 
 void FanController::_attachInterrupt()
