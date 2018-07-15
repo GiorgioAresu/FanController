@@ -5,16 +5,16 @@
 #######################################
 # Datatypes (KEYWORD1)
 #######################################
-FanController			KEYWORD1
+FanController	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
-begin					KEYWORD2
-getSpeed				KEYWORD2
-getDutyCycle			KEYWORD2
-setDutyCycle			KEYWORD2
+begin	KEYWORD2
+getSpeed	KEYWORD2
+getDutyCycle	KEYWORD2
+setDutyCycle	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
