@@ -18,8 +18,8 @@
 FanController fan(SENSOR_PIN, SENSOR_THRESHOLD, PWM_PIN);
 
 /*
- * The setup function. We only start the library here
- */
+   The setup function. We only start the library here
+*/
 void setup(void)
 {
   // start serial port
@@ -31,10 +31,10 @@ void setup(void)
 }
 
 /*
- * Main function, get and show the temperature
- */
+   Main function, get and show the temperature
+*/
 void loop(void)
-{ 
+{
   // Call fan.getSpeed() to get fan RPM.
   Serial.print("Current speed: ");
   unsigned int rpms = fan.getSpeed(); // Send the command to get RPM
