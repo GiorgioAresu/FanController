@@ -37,7 +37,7 @@ unsigned int FanController::getSpeed() {
 }
 
 void FanController::setDutyCycle(byte dutyCycle) {
-	_pwmDutyCycle = min(dutyCycle, 100);
+	_pwmDutyCycle = min((int)dutyCycle, 100);
 	analogWrite(_pwmPin, 2.55 * _pwmDutyCycle);
 }
 
