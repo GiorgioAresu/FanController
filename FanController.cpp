@@ -1,6 +1,10 @@
 #include "Arduino.h"
 #include "FanController.h"
 
+#if defined(ARDUINO_ARCH_ESP32)
+	#include <analogWrite.h>
+#endif
+
 FanController::FanController(byte sensorPin, unsigned int sensorThreshold, byte pwmPin)
 {
 	_sensorPin = sensorPin;
