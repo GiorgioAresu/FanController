@@ -20,6 +20,10 @@ void FanController::begin()
 	static byte instance;
 	_instance = instance;
 	_instances[instance] = this;
+#if defined(ARDUINO_ARCH_ESP32)
+	analogWriteResolution(10);
+	analogWriteFrequency(25000);
+#endif
 	digitalWrite(_sensorPin, HIGH);
 	setDutyCycle(_pwmDutyCycle);
 	_attachInterrupt();
