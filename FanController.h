@@ -20,7 +20,7 @@ class FanController
 		static FanController *_instances[6];
 		byte _sensorPin;
 		byte _sensorInterruptPin;
-		byte _sensorThreshold;
+		unsigned int _sensorThreshold;
 		byte _pwmPin;
 		byte _pwmDutyCycle;
 		byte _instance;
