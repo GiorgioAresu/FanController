@@ -40,8 +40,8 @@ unsigned int FanController::getSpeed() {
 		_halfRevs = 0;
 		_lastMillis = millis();
 		_attachInterrupt();
-		return _lastReading;
 	}
+	return _lastReading;
 }
 
 void FanController::setDutyCycle(byte dutyCycle) {
