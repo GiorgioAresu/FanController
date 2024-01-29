@@ -1,6 +1,16 @@
 #include "Arduino.h"
 #include "FanController.h"
 
+#if defined(ARDUINO_ARCH_ESP32)
+	#include <analogWrite.h>
+#endif
+
+#if defined(ESP8266)
+	#define ISR_PREFIX ICACHE_RAM_ATTR
+#else
+	#define ISR_PREFIX
+#endif
+
 FanController::FanController(byte sensorPin, unsigned int sensorThreshold, byte pwmPin)
 {
 	_sensorPin = sensorPin;
@@ -16,6 +26,10 @@ void FanController::begin()
 	static byte instance;
 	_instance = instance;
 	_instances[instance] = this;
+#if defined(ARDUINO_ARCH_ESP32)
+	analogWriteResolution(10);
+	analogWriteFrequency(25000);
+#endif
 	digitalWrite(_sensorPin, HIGH);
 	setDutyCycle(_pwmDutyCycle);
 	_attachInterrupt();
@@ -32,12 +46,12 @@ unsigned int FanController::getSpeed() {
 		_halfRevs = 0;
 		_lastMillis = millis();
 		_attachInterrupt();
-		return _lastReading;
 	}
+	return _lastReading;
 }
 
 void FanController::setDutyCycle(byte dutyCycle) {
-	_pwmDutyCycle = min(dutyCycle, 100);
+	_pwmDutyCycle = min((int)dutyCycle, 100);
 	analogWrite(_pwmPin, 2.55 * _pwmDutyCycle);
 }
 
@@ -85,9 +99,9 @@ void FanController::_triggerCaller(byte instance)
 	}
 }
 
-void FanController::_triggerExt0() { FanController::_triggerCaller(0); }
-void FanController::_triggerExt1() { FanController::_triggerCaller(1); }
-void FanController::_triggerExt2() { FanController::_triggerCaller(2); }
-void FanController::_triggerExt3() { FanController::_triggerCaller(3); }
-void FanController::_triggerExt4() { FanController::_triggerCaller(4); }
-void FanController::_triggerExt5() { FanController::_triggerCaller(5); }
+ISR_PREFIX void FanController::_triggerExt0() { FanController::_triggerCaller(0); }
+ISR_PREFIX void FanController::_triggerExt1() { FanController::_triggerCaller(1); }
+ISR_PREFIX void FanController::_triggerExt2() { FanController::_triggerCaller(2); }
+ISR_PREFIX void FanController::_triggerExt3() { FanController::_triggerCaller(3); }
+ISR_PREFIX void FanController::_triggerExt4() { FanController::_triggerCaller(4); }
+ISR_PREFIX void FanController::_triggerExt5() { FanController::_triggerCaller(5); }
