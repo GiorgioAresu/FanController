@@ -11,14 +11,27 @@
 	#define ISR_PREFIX
 #endif
 
-FanController::FanController(byte sensorPin, unsigned int sensorThreshold, byte pwmPin)
+FanController::FanController(byte sensorPin, unsigned int sensorThreshold, byte pwmPin, byte pwmMode)
 {
 	_sensorPin = sensorPin;
 	_sensorInterruptPin = digitalPinToInterrupt(sensorPin);
 	_sensorThreshold = sensorThreshold;
 	_pwmPin = pwmPin;
+	_pwmMode = pwmMode;
 	pinMode(pwmPin, OUTPUT);
-	_pwmDutyCycle = 100;
+	if (pwmMode == SW_PWM){
+		_pwmDutyCycle = 100;
+	}
+	#if defined(__AVR_ATmega640__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega1281__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega2561__) || (__AVR_ATmega48__) || defined(__AVR_ATmega88__) || defined(__AVR_ATmega88P__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega168P__) || defined(__AVR_ATmega328__) || defined(__AVR_ATmega328P__)
+		if (pwmMode == HW_PWM){
+			_pwmDutyCycle = 100;
+			_pwmFrequency = 1000;        // Start with conservative 1kHz frequency
+			InitTimersSafe();
+			if(SetPinFrequencySafe(_pwmPin, _pwmFrequency)){
+				pwmWrite(_pwmPin, _pwmDutyCycle * 2.55f);
+			}
+		}
+	#endif
 }
 
 void FanController::begin()
@@ -52,12 +65,39 @@ unsigned int FanController::getSpeed() {
 
 void FanController::setDutyCycle(byte dutyCycle) {
 	_pwmDutyCycle = min((int)dutyCycle, 100);
-	analogWrite(_pwmPin, 2.55 * _pwmDutyCycle);
+	if (_pwmMode == SW_PWM){
+		analogWrite(_pwmPin, 2.55f * _pwmDutyCycle);
+	}
+	else if (_pwmMode == HW_PWM){
+		pwmWrite(_pwmPin, 2.55f * _pwmDutyCycle);
+	}
 }
 
 byte FanController::getDutyCycle() {
 	return _pwmDutyCycle;
 }
+
+#if defined(__AVR_ATmega640__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega1281__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega2561__) || (__AVR_ATmega48__) || defined(__AVR_ATmega88__) || defined(__AVR_ATmega88P__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega168P__) || defined(__AVR_ATmega328__) || defined(__AVR_ATmega328P__)
+bool FanController::setPwmFrequency(int32_t freq){
+	if (_pwmMode == SW_PWM){
+		return false;
+	}
+	bool freqSet = SetPinFrequencySafe(_pwmPin, freq);
+	if (freqSet){
+		_pwmFrequency = freq;
+	}
+	return freqSet;
+}
+
+int32_t FanController::getPwmFrequency(){
+	if (_pwmMode == SW_PWM){
+		return 0;
+	}
+	else {
+		return _pwmFrequency;
+	}
+}
+#endif
 
 void FanController::_attachInterrupt()
 {
