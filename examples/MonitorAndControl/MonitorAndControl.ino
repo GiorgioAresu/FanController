@@ -1,7 +1,7 @@
 // Include the library
 #include <FanController.h>
 
-// Sensor wire is plugged into port 2 on the Arduino.
+// Sensor (tachometer) pin (3rd on 4 pin fans)
 // For a list of available pins on your board,
 // please refer to: https://www.arduino.cc/en/Reference/AttachInterrupt
 #define SENSOR_PIN 2
@@ -36,30 +36,23 @@ void setup(void)
 void loop(void)
 {
   // Call fan.getSpeed() to get fan RPM.
-  Serial.print("Current speed: ");
   unsigned int rpms = fan.getSpeed(); // Send the command to get RPM
-  Serial.print(rpms);
-  Serial.println("RPM");
+  byte dutyCycle = fan.getDutyCycle();
+  Serial.printf("Current speed: %5d RPM | Duty cycle: %3d%%\n", rpms, dutyCycle);
 
   // Get new speed from Serial (0-100%)
   if (Serial.available() > 0) {
-    // Parse speed
-    int input = Serial.parseInt();
+    String line = Serial.readStringUntil('\n');
+    int input = line.toInt();
 
     // Constrain a 0-100 range
     byte target = max(min(input, 100), 0);
 
     // Print obtained value
-    Serial.print("Setting duty cycle: ");
-    Serial.println(target, DEC);
+    Serial.printf("Setting duty cycle: % 3d%%\n", target);
 
     // Set fan duty cycle
     fan.setDutyCycle(target);
-
-    // Get duty cycle
-    byte dutyCycle = fan.getDutyCycle();
-    Serial.print("Duty cycle: ");
-    Serial.println(dutyCycle, DEC);
   }
 
   // Not really needed, just avoiding spamming the monitor,

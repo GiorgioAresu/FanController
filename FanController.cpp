@@ -1,10 +1,6 @@
 #include "Arduino.h"
 #include "FanController.h"
 
-#if defined(ARDUINO_ARCH_ESP32)
-	#include <analogWrite.h>
-#endif
-
 #if defined(ESP8266)
 	#define ISR_PREFIX ICACHE_RAM_ATTR
 #else
@@ -27,8 +23,8 @@ void FanController::begin()
 	_instance = instance;
 	_instances[instance] = this;
 #if defined(ARDUINO_ARCH_ESP32)
-	analogWriteResolution(10);
-	analogWriteFrequency(25000);
+	analogWriteResolution(_pwmPin,10);
+	analogWriteFrequency(_pwmPin, (uint32_t)25000);
 #endif
 	digitalWrite(_sensorPin, HIGH);
 	setDutyCycle(_pwmDutyCycle);
@@ -52,7 +48,7 @@ unsigned int FanController::getSpeed() {
 
 void FanController::setDutyCycle(byte dutyCycle) {
 	_pwmDutyCycle = min((int)dutyCycle, 100);
-	analogWrite(_pwmPin, 2.55 * _pwmDutyCycle);
+	analogWrite(_pwmPin, (int)(2.55 * _pwmDutyCycle));
 }
 
 byte FanController::getDutyCycle() {
