@@ -26,8 +26,9 @@ void FanController::begin()
 	_instance = instance;
 	_instances[instance] = this;
 #if defined(ARDUINO_ARCH_ESP32)
-	analogWriteResolution(_pwmPin, 9);
-	analogWriteFrequency(_pwmPin, (uint32_t)25000);
+	// analogWriteResolution(_pwmPin, 9);//changed this - GR
+	analogWriteResolution(9);
+	analogWriteFrequency((uint32_t)25000);
 #endif
 	digitalWrite(_sensorPin, HIGH);
 	setDutyCycle(_pwmDutyCycle);
@@ -50,8 +51,17 @@ unsigned int FanController::getSpeed() {
 }
 
 void FanController::setDutyCycle(byte dutyCycle) {
-	_pwmDutyCycle = min((int)dutyCycle, 100);
-	analogWrite(_pwmPin, (int)(2.55 * _pwmDutyCycle));
+    _pwmDutyCycle = min((int)dutyCycle, 100); // _pwmDutyCycle is 0-100
+
+#if defined(ARDUINO_ARCH_ESP32)
+    // ESP32 is configured for 9-bit resolution (0-511) in begin()
+    const int maxPwmValue = 511; // (1 << 9) - 1
+    analogWrite(_pwmPin, (int)((_pwmDutyCycle / 100.0) * maxPwmValue));
+#else
+    // Standard Arduino (AVR - typically 8-bit PWM, 0-255)
+    // The original 2.55 scaling factor is for 8-bit
+    analogWrite(_pwmPin, (int)(2.55 * _pwmDutyCycle)); // Equivalent to ((_pwmDutyCycle / 100.0) * 255.0)
+#endif
 }
 
 byte FanController::getDutyCycle() {
