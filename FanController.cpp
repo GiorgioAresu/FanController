@@ -50,7 +50,7 @@ unsigned int FanController::getSpeed() {
 	return _lastReading;
 }
 
-void FanController::setDutyCycle(byte dutyCycle) {}
+void FanController::setDutyCycle(byte dutyCycle) {
     _pwmDutyCycle = min((int)dutyCycle, 100); // _pwmDutyCycle is 0-100
 
 #if defined(ARDUINO_ARCH_ESP32)
